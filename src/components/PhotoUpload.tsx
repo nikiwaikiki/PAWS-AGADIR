@@ -1,24 +1,38 @@
 import { useState, useRef, useEffect } from "react";
-import { Camera, Upload, X, Loader2 } from "lucide-react";
+import { Camera, Upload, X, Loader2, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { compressImage } from "@/lib/compressImage";
+import { useOfflineContext } from "@/contexts/OfflineContext";
+import { useTranslation } from "react-i18next";
 
 interface PhotoUploadProps {
   onPhotoUploaded: (url: string) => void;
   currentPhotoUrl?: string;
 }
 
+/** Convert a compressed File to a base64 data URL for offline storage. */
+async function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(new Error("FileReader failed"));
+    reader.readAsDataURL(file);
+  });
+}
+
 const PhotoUpload = ({ onPhotoUploaded, currentPhotoUrl }: PhotoUploadProps) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
+  const { isOnline } = useOfflineContext();
   const [isUploading, setIsUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentPhotoUrl || null);
   const [error, setError] = useState<string | null>(null);
   const [sizeInfo, setSizeInfo] = useState<string | null>(null);
+  const [offlineSaved, setOfflineSaved] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // wenn currentPhotoUrl sich ändert (z.B. edit), Preview anpassen
   useEffect(() => {
     setPreviewUrl(currentPhotoUrl || null);
   }, [currentPhotoUrl]);
@@ -27,77 +41,84 @@ const PhotoUpload = ({ onPhotoUploaded, currentPhotoUrl }: PhotoUploadProps) => 
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
-      setError("Bitte wähle ein Bild aus");
+      setError(t('photoUpload.invalidType'));
       return;
     }
 
-    // niemals wegen Größe blocken (UX!)
     setError(null);
     setSizeInfo(null);
+    setOfflineSaved(false);
     setIsUploading(true);
 
-    // Preview sofort anzeigen
     const objectUrl = URL.createObjectURL(file);
     setPreviewUrl(objectUrl);
 
     try {
-      if (!user?.id) {
-        throw new Error("Not authenticated");
-      }
-
-      // ✅ Komprimieren (schneller Upload, weniger Abbrüche)
+      // Always compress first (works offline -- pure canvas operation)
       const compressed = await compressImage(file, {
         maxWidth: 1600,
         maxHeight: 1600,
         quality: 0.82,
-        mimeType: "image/jpeg", // maximal kompatibel
+        mimeType: "image/jpeg",
       });
 
-      // Size Info (optional)
       const origMB = (file.size / 1024 / 1024).toFixed(1);
       const compMB = (compressed.size / 1024 / 1024).toFixed(1);
       if (compressed.size < file.size) {
-        setSizeInfo(`Optimiert: ${origMB}MB → ${compMB}MB`);
+        setSizeInfo(`${t('photoUpload.optimized')}: ${origMB}MB → ${compMB}MB`);
       }
 
-      // Dateiname (mit neuer Extension)
-      const fileExt = compressed.name.split(".").pop() || "jpg";
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      if (isOnline && user?.id) {
+        // ONLINE: Upload to Supabase Storage
+        const fileExt = compressed.name.split(".").pop() || "jpg";
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
-      // Upload to Supabase Storage
-      const { data, error: uploadError } = await supabase.storage
-        .from("dog-photos")
-        .upload(fileName, compressed, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: compressed.type,
-        });
+        const { data, error: uploadError } = await supabase.storage
+          .from("dog-photos")
+          .upload(fileName, compressed, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: compressed.type,
+          });
 
-      if (uploadError) throw uploadError;
+        if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: urlData } = supabase.storage.from("dog-photos").getPublicUrl(data.path);
-
-      onPhotoUploaded(urlData.publicUrl);
+        const { data: urlData } = supabase.storage.from("dog-photos").getPublicUrl(data.path);
+        onPhotoUploaded(urlData.publicUrl);
+      } else {
+        // OFFLINE: Convert to base64 data URL for offline queue storage
+        const dataUrl = await fileToDataUrl(compressed);
+        onPhotoUploaded(dataUrl);
+        setOfflineSaved(true);
+      }
     } catch (err) {
       console.error("Upload error:", err);
-      setError("Fehler beim Hochladen. Bitte versuche es erneut.");
-      setPreviewUrl(null);
-      setSizeInfo(null);
+      // Fallback: if online upload fails, try offline mode
+      try {
+        const compressed = await compressImage(file, {
+          maxWidth: 1600,
+          maxHeight: 1600,
+          quality: 0.82,
+          mimeType: "image/jpeg",
+        });
+        const dataUrl = await fileToDataUrl(compressed);
+        onPhotoUploaded(dataUrl);
+        setOfflineSaved(true);
+      } catch {
+        setError(t('photoUpload.uploadError'));
+        setPreviewUrl(null);
+        setSizeInfo(null);
+      }
     } finally {
       setIsUploading(false);
-
-      // Cleanup: ObjectURL freigeben, aber erst nachdem img gerendert hat
-      // (wir lassen die Preview stehen; das ist ok, aber sauberer ist revoke + setzen auf current URL)
-      // Wenn du das wirklich „perfekt“ willst, sag Bescheid – dann mache ich es ohne Flackern.
     }
   };
 
   const handleRemovePhoto = () => {
     setPreviewUrl(null);
     setSizeInfo(null);
+    setOfflineSaved(false);
     onPhotoUploaded("");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -108,7 +129,6 @@ const PhotoUpload = ({ onPhotoUploaded, currentPhotoUrl }: PhotoUploadProps) => 
 
   return (
     <div className="space-y-3">
-      {/* Hidden file input with camera/gallery access */}
       <input
         ref={fileInputRef}
         type="file"
@@ -122,7 +142,7 @@ const PhotoUpload = ({ onPhotoUploaded, currentPhotoUrl }: PhotoUploadProps) => 
         <div className="relative">
           <img
             src={previewUrl}
-            alt="Vorschau"
+            alt={t('photoUpload.preview')}
             className="w-full h-48 object-cover rounded-lg border border-border"
           />
           {isUploading && (
@@ -152,13 +172,20 @@ const PhotoUpload = ({ onPhotoUploaded, currentPhotoUrl }: PhotoUploadProps) => 
             <Upload className="w-8 h-8 text-muted-foreground" />
           </div>
           <div className="text-center">
-            <p className="text-sm font-medium text-foreground">Foto aufnehmen oder hochladen</p>
-            <p className="text-xs text-muted-foreground">Tippe hier, um ein Foto auszuwählen</p>
+            <p className="text-sm font-medium text-foreground">{t('photoUpload.takeOrUpload')}</p>
+            <p className="text-xs text-muted-foreground">{t('photoUpload.tapHere')}</p>
           </div>
         </div>
       )}
 
       {sizeInfo && <p className="text-xs text-muted-foreground">{sizeInfo}</p>}
+
+      {offlineSaved && (
+        <div className="flex items-center gap-2 text-xs text-warning">
+          <WifiOff className="w-3 h-3" />
+          <span>{t('photoUpload.savedOffline')}</span>
+        </div>
+      )}
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
@@ -166,7 +193,7 @@ const PhotoUpload = ({ onPhotoUploaded, currentPhotoUrl }: PhotoUploadProps) => 
         <div className="flex gap-2">
           <Button type="button" variant="outline" className="flex-1 gap-2" onClick={triggerFileInput}>
             <Camera className="w-4 h-4" />
-            Kamera
+            {t('photoUpload.camera')}
           </Button>
           <Button
             type="button"
@@ -183,7 +210,7 @@ const PhotoUpload = ({ onPhotoUploaded, currentPhotoUrl }: PhotoUploadProps) => 
             }}
           >
             <Upload className="w-4 h-4" />
-            Galerie
+            {t('photoUpload.gallery')}
           </Button>
         </div>
       )}
@@ -192,4 +219,3 @@ const PhotoUpload = ({ onPhotoUploaded, currentPhotoUrl }: PhotoUploadProps) => 
 };
 
 export default PhotoUpload;
-

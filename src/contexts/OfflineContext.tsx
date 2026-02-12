@@ -83,12 +83,40 @@ export function OfflineProvider({ children }: { children: React.ReactNode }) {
         const formData = report.data;
         const isAutoApproved = formData.reportType === 'save';
 
+        // If photo is a base64 data URL (offline capture), upload it first
+        let photoUrl = formData.photo || null;
+        if (photoUrl && photoUrl.startsWith('data:image/')) {
+          try {
+            const response = await fetch(photoUrl);
+            const blob = await response.blob();
+            const ext = blob.type === 'image/webp' ? 'webp' : 'jpg';
+            const fileName = `${formData.reportedBy}/${Date.now()}.${ext}`;
+
+            const { data: uploadData, error: uploadError } = await supabase.storage
+              .from('dog-photos')
+              .upload(fileName, blob, {
+                cacheControl: '3600',
+                upsert: false,
+                contentType: blob.type,
+              });
+
+            if (uploadError) throw uploadError;
+
+            const { data: urlData } = supabase.storage.from('dog-photos').getPublicUrl(uploadData.path);
+            photoUrl = urlData.publicUrl;
+            console.log('[Offline] Uploaded offline photo:', fileName);
+          } catch (photoErr) {
+            console.error('[Offline] Failed to upload photo, proceeding without:', photoErr);
+            photoUrl = null;
+          }
+        }
+
         const { error } = await supabase
           .from('dogs')
           .insert({
             name: formData.name,
             ear_tag: formData.earTag,
-            photo_url: formData.photo || null,
+            photo_url: photoUrl,
             latitude: formData.latitude,
             longitude: formData.longitude,
             location: formData.location,

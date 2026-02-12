@@ -20,13 +20,41 @@
     "title": "Save The",
     "titleHighlight": "Paws",
     "description": "Melde Tiere in Not, verbinde dich mit lokalen Helfern und verfolge geimpfte Hunde in der wunderschönen Küstenregion Agadir-Taghazout.",
-    "slogan": "Together, we save lives. 💚",
-    "exploreMap": "Karte erkunden",
+    "slogan": "Together, we save lives.",
+    "viewDogs": "Hunde ansehen",
     "reportAnimal": "Tier melden",
+    "imageAlt": "Hund am Strand von Taghazout",
     "stats": {
       "vaccinated": "Geimpfte Hunde",
       "users": "User"
     }
+  },
+  "landing": {
+    "mission": {
+      "title": "Schutz fur Strassenhunde in Agadir & Taghazout",
+      "description": "Save The Paws ist eine gemeinschaftliche Initiative zum Taggen, Impfen und Retten von Strassenhunden entlang der wunderschonen Atlantikkuste Marokkos. Wir verbinden Touristen, Einheimische und Tierliebhaber, um einen echten Unterschied zu machen -- eine Pfote nach der anderen."
+    },
+    "features": {
+      "title": "Was du tun kannst",
+      "description": "Entdecke die Werkzeuge, die helfen, Strassenhunde in der Region zu schutzen.",
+      "taggedDogs": {
+        "title": "Tagged Hunde ansehen",
+        "description": "Durchsuche alle registrierten und geimpften Hunde in der Community."
+      },
+      "sos": {
+        "title": "SOS Notfall",
+        "description": "Melde verletzte oder gefahrdete Tiere, die sofortige Hilfe brauchen."
+      },
+      "reportStray": {
+        "title": "Streuner melden",
+        "description": "Du siehst einen Hund ohne Marke? Lass es uns wissen, damit wir helfen konnen."
+      },
+      "adopt": {
+        "title": "Hund adoptieren",
+        "description": "Gib einem geretteten Hund ein Zuhause. Durchsuche Hunde zur Adoption."
+      }
+    },
+    "learnMore": "Mehr erfahren"
   },
   "reportTypes": {
     "title": "Wie du helfen kannst",

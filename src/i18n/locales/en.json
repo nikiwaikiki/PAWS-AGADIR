@@ -20,13 +20,41 @@
     "title": "Save The",
     "titleHighlight": "Paws",
     "description": "Report animals in need, connect with local helpers, and track vaccinated dogs in the beautiful Agadir-Taghazout coastal region.",
-    "slogan": "Together, we save lives. 💚",
-    "exploreMap": "Explore Map",
+    "slogan": "Together, we save lives.",
+    "viewDogs": "View Dogs",
     "reportAnimal": "Report Animal",
+    "imageAlt": "Dog on the beach of Taghazout",
     "stats": {
       "vaccinated": "Vaccinated Dogs",
       "users": "Users"
     }
+  },
+  "landing": {
+    "mission": {
+      "title": "Protecting Stray Dogs in Agadir & Taghazout",
+      "description": "Save The Paws is a community-driven initiative to tag, vaccinate, and rescue stray dogs along Morocco's beautiful Atlantic coast. We connect tourists, locals, and animal lovers to make a real difference -- one paw at a time."
+    },
+    "features": {
+      "title": "What You Can Do",
+      "description": "Explore the tools that help protect stray dogs in the region.",
+      "taggedDogs": {
+        "title": "See Tagged Dogs",
+        "description": "Browse all registered and vaccinated dogs in the community."
+      },
+      "sos": {
+        "title": "SOS Emergency",
+        "description": "Report injured or endangered animals that need immediate help."
+      },
+      "reportStray": {
+        "title": "Report a Stray",
+        "description": "Spot an untagged dog? Let us know so we can help."
+      },
+      "adopt": {
+        "title": "Adopt a Dog",
+        "description": "Give a rescued dog a forever home. Browse dogs ready for adoption."
+      }
+    },
+    "learnMore": "Learn More"
   },
   "reportTypes": {
     "title": "How You Can Help",
