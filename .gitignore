@@ -6,6 +6,9 @@ node_modules/
 out/
 dist/
 
+# TypeScript
+tsconfig.tsbuildinfo
+
 # Logs
 logs/
 *.log
