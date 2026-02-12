@@ -1,10 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export",
+  output: "standalone",
   images: {
-    unoptimized: true,
+    domains: ["acdwmmzaeuxuxldwjrpl.supabase.co"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "acdwmmzaeuxuxldwjrpl.supabase.co",
+      },
+    ],
   },
-  trailingSlash: true,
+  compress: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
 };
 
 export default nextConfig;

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useTranslation } from "react-i18next";
-import { useAuth } from "@/lib/auth-context";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/lib/auth-provider';
+import { Button } from '@/src/components/ui/button';
+import { Card, CardContent } from '@/src/components/ui/card';
 import {
   PawPrint,
   AlertTriangle,
@@ -13,13 +13,35 @@ import {
   Heart,
   ArrowRight,
   HandHeart,
-} from "lucide-react";
+  MapPin,
+  Shield,
+} from 'lucide-react';
 
 const FEATURES = [
-  { key: "taggedDogs", icon: PawPrint, href: "/dogs", color: "bg-safe/10 text-safe" },
-  { key: "sos", icon: AlertTriangle, href: "/report", color: "bg-warning/10 text-warning" },
-  { key: "reportStray", icon: Dog, href: "/report", color: "bg-primary/10 text-primary" },
-  { key: "adopt", icon: Heart, href: "/adoption", color: "bg-safe/10 text-safe" },
+  {
+    key: 'taggedDogs',
+    icon: PawPrint,
+    href: '/dogs',
+    color: 'bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400',
+  },
+  {
+    key: 'sos',
+    icon: AlertTriangle,
+    href: '/report',
+    color: 'bg-red-100 text-red-600 dark:bg-red-900/20 dark:text-red-400',
+  },
+  {
+    key: 'reportStray',
+    icon: Dog,
+    href: '/report',
+    color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400',
+  },
+  {
+    key: 'adopt',
+    icon: Heart,
+    href: '/adoption',
+    color: 'bg-pink-100 text-pink-600 dark:bg-pink-900/20 dark:text-pink-400',
+  },
 ];
 
 export default function HomePage() {
@@ -27,151 +49,121 @@ export default function HomePage() {
   const { user, isHelper } = useAuth();
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header />
+    <div className="flex flex-col">
+      <section className="relative flex min-h-[70vh] items-end overflow-hidden">
+        <Image
+          src="/hero-dog.jpg"
+          alt="Dog rescue in Agadir"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-      <main className="flex-1">
-        {/* Hero */}
-        <section className="relative flex min-h-[60vh] items-end overflow-hidden sm:min-h-[70vh]">
-          <Image
-            src="/hero-dog.jpg"
-            alt={t("hero.imageAlt")}
-            fill
-            priority
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent" />
-
-          <div className="relative z-10 w-full px-4 pb-10 pt-20 sm:pb-14">
-            <div className="container">
-              <p className="mb-2 text-xs font-medium uppercase tracking-widest text-primary-foreground/70">
-                {t("hero.region")}
-              </p>
-              <h1 className="font-display text-4xl font-bold leading-tight text-primary-foreground sm:text-5xl lg:text-6xl">
-                {t("hero.title")}{" "}
-                <span className="text-primary">{t("hero.titleHighlight")}</span>
-              </h1>
-              <p className="mt-3 max-w-lg text-sm leading-relaxed text-primary-foreground/85 sm:text-base">
-                {t("hero.description")}
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link
-                  href="/dogs"
-                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
-                >
-                  <PawPrint className="h-4 w-4" />
-                  {t("hero.viewDogs")}
-                </Link>
-                <Link
-                  href={user ? "/report" : "/auth"}
-                  className="inline-flex items-center gap-2 rounded-lg bg-primary-foreground/15 px-5 py-2.5 text-sm font-semibold text-primary-foreground backdrop-blur transition-colors hover:bg-primary-foreground/25"
-                >
-                  {t("hero.reportAnimal")}
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Mission */}
-        <section className="border-b border-border py-14 sm:py-20">
-          <div className="container px-4 text-center">
-            <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl text-balance">
-              {t("landing.mission.title")}
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-              {t("landing.mission.description")}
+        <div className="container relative z-10 px-4 pb-12 pt-24 md:pb-16">
+          <div className="max-w-3xl">
+            <p className="mb-3 text-sm font-medium uppercase tracking-wider text-white/80">
+              Agadir - Taghazout, Morocco
             </p>
-          </div>
-        </section>
-
-        {/* Features */}
-        <section className="py-14 sm:py-20">
-          <div className="container px-4">
-            <div className="mb-10 text-center">
-              <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl">
-                {t("landing.features.title")}
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t("landing.features.description")}
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {FEATURES.map((f) => {
-                const Icon = f.icon;
-                return (
-                  <Link
-                    key={f.key}
-                    href={f.href}
-                    className="group flex flex-col items-start rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/30 hover:shadow-md"
-                  >
-                    <div className={`mb-3 rounded-lg p-2.5 ${f.color}`}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <h3 className="text-sm font-semibold text-foreground">
-                      {t(`landing.features.${f.key}.title`)}
-                    </h3>
-                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                      {t(`landing.features.${f.key}.description`)}
-                    </p>
-                    <span className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                      {t("landing.learnMore")}
-                      <ArrowRight className="h-3 w-3" />
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Donate Teaser */}
-        <section className="border-t border-border bg-card py-14 sm:py-20">
-          <div className="container flex flex-col items-center gap-5 px-4 text-center">
-            <div className="rounded-full bg-primary/10 p-4">
-              <HandHeart className="h-8 w-8 text-primary" />
-            </div>
-            <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl text-balance">
-              {t("donation.title")}
-            </h2>
-            <p className="max-w-lg text-sm leading-relaxed text-muted-foreground">
-              {t("donation.description")}
+            <h1 className="mb-4 text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl">
+              Save The Paws <span className="text-primary">Agadir</span>
+            </h1>
+            <p className="mb-6 text-lg text-white/90 md:text-xl">
+              Community platform for rescuing and protecting stray dogs. Report dogs in need,
+              track vaccinations, and connect with local helpers.
             </p>
-            <a
-              href="https://www.paypal.com/donate/?hosted_button_id=XXXXXXXX"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-transform hover:scale-105"
-            >
-              <Heart className="h-4 w-4" />
-              {t("donation.cta")}
-            </a>
-          </div>
-        </section>
-
-        {/* Become a Helper CTA */}
-        {!isHelper && (
-          <section className="py-14 sm:py-20">
-            <div className="container flex flex-col items-center gap-5 px-4 text-center">
-              <h2 className="font-display text-2xl font-bold text-foreground sm:text-3xl text-balance">
-                {t("helperCta.title")}
-              </h2>
-              <p className="max-w-lg text-sm leading-relaxed text-muted-foreground">
-                {t("helperCta.description")}
-              </p>
-              <Link
-                href={user ? "/become-helper" : "/auth"}
-                className="inline-flex items-center gap-2 rounded-lg border-2 border-primary bg-transparent px-6 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
-              >
-                {t("helperCta.apply")}
-                <ArrowRight className="h-4 w-4" />
+            <div className="flex flex-wrap gap-3">
+              <Link href="/dogs">
+                <Button size="lg" className="gap-2">
+                  <PawPrint className="h-5 w-5" />
+                  View Dogs
+                </Button>
+              </Link>
+              <Link href={user ? '/report' : '/auth'}>
+                <Button size="lg" variant="secondary" className="gap-2">
+                  <AlertTriangle className="h-5 w-5" />
+                  Report Dog
+                </Button>
               </Link>
             </div>
-          </section>
-        )}
-      </main>
+          </div>
+        </div>
+      </section>
 
-      <Footer />
+      <section className="container px-4 py-12 md:py-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">Our Mission</h2>
+          <p className="text-lg text-muted-foreground">
+            We protect stray dogs in the Agadir-Taghazout region through community-driven
+            rescue efforts. Track vaccinated dogs, report emergencies, and connect with
+            volunteers committed to animal welfare.
+          </p>
+        </div>
+      </section>
+
+      <section className="container px-4 py-12 md:py-16">
+        <h2 className="mb-8 text-center text-3xl font-bold">How It Works</h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {FEATURES.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <Link key={feature.key} href={feature.href}>
+                <Card className="h-full transition-all hover:shadow-lg">
+                  <CardContent className="p-6">
+                    <div className={`mb-4 inline-flex rounded-lg p-3 ${feature.color}`}>
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <h3 className="mb-2 text-lg font-semibold">
+                      {t(`landing.features.${feature.key}.title`)}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {t(`landing.features.${feature.key}.description`)}
+                    </p>
+                    <div className="mt-4 flex items-center text-sm font-medium text-primary">
+                      Learn more <ArrowRight className="ml-1 h-4 w-4" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="border-y bg-muted/50 py-12 md:py-16">
+        <div className="container px-4 text-center">
+          <div className="mx-auto mb-6 inline-flex rounded-full bg-primary/10 p-4">
+            <HandHeart className="h-10 w-10 text-primary" />
+          </div>
+          <h2 className="mb-4 text-3xl font-bold">Support Our Work</h2>
+          <p className="mx-auto mb-6 max-w-2xl text-lg text-muted-foreground">
+            Your donations help us provide medical care, food, and shelter for rescued dogs.
+            Every contribution makes a difference in saving lives.
+          </p>
+          <Button size="lg" className="gap-2">
+            <Heart className="h-5 w-5" />
+            Donate Now
+          </Button>
+        </div>
+      </section>
+
+      {!isHelper && (
+        <section className="container px-4 py-12 md:py-16">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="mb-4 text-3xl font-bold">Become a Helper</h2>
+            <p className="mb-6 text-lg text-muted-foreground">
+              Join our team of volunteers and help protect stray dogs in your community.
+              Assist with rescues, vaccinations, and finding homes for dogs in need.
+            </p>
+            <Link href={user ? '/become-helper' : '/auth'}>
+              <Button size="lg" variant="outline" className="gap-2">
+                Apply Now <ArrowRight className="h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

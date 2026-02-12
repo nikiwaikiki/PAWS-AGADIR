@@ -1,104 +1,168 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/src/components/ui/button';
+import { Input } from '@/src/components/ui/input';
+import { Label } from '@/src/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/src/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/src/components/ui/tabs';
+import { useAuth } from '@/lib/auth-provider';
+import { toast } from 'sonner';
+import { LoadingSpinner } from '@/src/components/ui/loading';
 
 export default function AuthPage() {
-  const { t } = useTranslation();
-  const router = useRouter();
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
+  const { signIn, signUp } = useAuth();
+  const router = useRouter();
+  const { t } = useTranslation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase) return;
-    setError("");
     setLoading(true);
 
-    if (isLogin) {
-      const { error: err } = await supabase.auth.signInWithPassword({ email, password });
-      if (err) setError(t("auth.invalidCredentials"));
-      else router.push("/dogs");
-    } else {
-      const { error: err } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { display_name: displayName } },
-      });
-      if (err) setError(t("auth.emailAlreadyRegistered"));
-      else router.push("/dogs");
+    try {
+      const { error } = await signIn(email, password);
+
+      if (error) {
+        toast.error(error);
+        return;
+      }
+
+      toast.success(t('auth.signInSuccess'));
+      router.push('/');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await signUp(email, password, displayName);
+
+      if (error) {
+        toast.error(error);
+        return;
+      }
+
+      toast.success(t('auth.signUpSuccess'));
+      router.push('/');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-      <Header />
-      <main className="mx-auto flex min-h-[60vh] max-w-sm flex-col justify-center px-4 py-12">
-        <h1 className="font-display text-center text-2xl font-bold text-foreground">
-          {isLogin ? t("auth.login") : t("auth.signup")}
-        </h1>
+    <div className="container flex min-h-[calc(100vh-4rem)] items-center justify-center py-8">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>{t('auth.welcome')}</CardTitle>
+          <CardDescription>{t('auth.welcomeDescription')}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="signin" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="signin">{t('auth.signIn')}</TabsTrigger>
+              <TabsTrigger value="signup">{t('auth.signUp')}</TabsTrigger>
+            </TabsList>
 
-        <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
-          {!isLogin && (
-            <input
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder={t("auth.namePlaceholder")}
-              className="h-11 rounded-lg border border-border bg-card px-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          )}
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={t("auth.emailPlaceholder")}
-            required
-            className="h-11 rounded-lg border border-border bg-card px-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder={t("auth.password")}
-            required
-            minLength={6}
-            className="h-11 rounded-lg border border-border bg-card px-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-          />
+            <TabsContent value="signin">
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email">{t('auth.email')}</Label>
+                  <Input
+                    id="signin-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password">{t('auth.password')}</Label>
+                  <Input
+                    id="signin-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={loading}
+                    minLength={6}
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? (
+                    <LoadingSpinner size="sm" />
+                  ) : (
+                    t('auth.signIn')
+                  )}
+                </Button>
+              </form>
+            </TabsContent>
 
-          {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="h-11 rounded-lg bg-primary font-medium text-primary-foreground transition-opacity disabled:opacity-50"
-          >
-            {loading ? t("auth.pleaseWait") : isLogin ? t("auth.login") : t("auth.signup")}
-          </button>
-        </form>
-
-        <button
-          onClick={() => {
-            setIsLogin(!isLogin);
-            setError("");
-          }}
-          className="mt-4 text-center text-sm text-primary hover:underline"
-        >
-          {isLogin ? t("auth.noAccount") : t("auth.alreadyRegistered")}
-        </button>
-      </main>
-      <Footer />
-    </>
+            <TabsContent value="signup">
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-name">{t('auth.displayName')}</Label>
+                  <Input
+                    id="signup-name"
+                    type="text"
+                    placeholder={t('auth.displayNamePlaceholder')}
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">{t('auth.email')}</Label>
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">{t('auth.password')}</Label>
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    disabled={loading}
+                    minLength={6}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t('auth.passwordRequirement')}
+                  </p>
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? (
+                    <LoadingSpinner size="sm" />
+                  ) : (
+                    t('auth.signUp')
+                  )}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

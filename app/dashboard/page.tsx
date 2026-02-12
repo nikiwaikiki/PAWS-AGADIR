@@ -69,7 +69,7 @@ export default function DashboardPage() {
   };
   const updateDogField = async (id: string, field: Partial<Dog>) => {
     if (!supabase) return;
-    await supabase.from("dogs").update(field).eq("id", id);
+    await supabase.from("dogs").update(field as any).eq("id", id);
     setEditDog(null);
     fetchAll();
   };

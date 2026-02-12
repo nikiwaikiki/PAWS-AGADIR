@@ -1,16 +1,21 @@
-"use client";
+'use client';
 
-import { I18nextProvider } from "react-i18next";
-import i18n from "@/lib/i18n";
-import { AuthProvider } from "@/lib/auth-context";
-import { Toaster } from "sonner";
+import { useEffect } from 'react';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/lib/i18n-config';
+import { AuthProvider } from '@/lib/auth-provider';
+import { setupMobileOptimizations } from '@/lib/mobile-utils';
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const cleanup = setupMobileOptimizations();
+    return cleanup;
+  }, []);
+
   return (
     <I18nextProvider i18n={i18n}>
       <AuthProvider>
         {children}
-        <Toaster position="top-center" richColors />
       </AuthProvider>
     </I18nextProvider>
   );
