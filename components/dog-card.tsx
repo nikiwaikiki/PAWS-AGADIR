@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTranslation } from "react-i18next";
-import { MapPin, Syringe, AlertTriangle, Clock, Eye } from "lucide-react";
+import { MapPin, Syringe, AlertTriangle, Clock, Eye, PawPrint } from "lucide-react";
 import type { Tables } from "@/lib/database.types";
 
 type Dog = Tables<"dogs">;
@@ -39,10 +39,11 @@ export function DogCard({ dog, showStatus }: DogCardProps) {
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            unoptimized
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-4xl text-muted-foreground">
-            🐾
+          <div className="flex h-full items-center justify-center">
+            <PawPrint className="h-12 w-12 text-muted-foreground/30" />
           </div>
         )}
         {dog.report_type === "sos" && (
