@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST='{"app/map/page.tsx -> @/components/dog-map":{"id":6308,"files":["static/css/55693049b062c6a3.css","static/chunks/d0deef33.cac6acee3fffe7af.js","static/chunks/308.1f97fc83ef4044d2.js"]}}';
