@@ -8,15 +8,16 @@ import {
 } from '@/components/ui/dialog';
 import { useActiveAdvertisement } from '@/hooks/useAdvertisements';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { useTranslation } from 'react-i18next';
 
 const AD_SHOWN_KEY = 'ad_popup_shown_session';
 
 const AdPopup = () => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const { data: ad, isLoading } = useActiveAdvertisement();
 
   useEffect(() => {
-    // Only show ad once per session
     if (sessionStorage.getItem(AD_SHOWN_KEY)) {
       return;
     }
@@ -51,7 +52,6 @@ const AdPopup = () => {
           <DialogTitle>{ad.title}</DialogTitle>
         </VisuallyHidden>
         
-        {/* Close button */}
         <Button
           variant="ghost"
           size="icon"
@@ -61,7 +61,6 @@ const AdPopup = () => {
           <X className="h-4 w-4" />
         </Button>
 
-        {/* Ad Content */}
         <div className="cursor-pointer" onClick={handleVisit}>
           <img
             src={ad.image_url}
@@ -75,7 +74,7 @@ const AdPopup = () => {
             </h3>
             <Button className="w-full gap-2" onClick={handleVisit}>
               <ExternalLink className="w-4 h-4" />
-              Besuchen
+              {t('adPopup.visit')}
             </Button>
           </div>
         </div>

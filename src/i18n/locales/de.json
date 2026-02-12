@@ -347,10 +347,54 @@
       "yourApplication": "Deine Bewerbung:"
     }
   },
+  "dogsPage": {
+    "title": "Alle Hunde",
+    "description": "Alle registrierten Hunde in unserer Community-Datenbank",
+    "searchPlaceholder": "Suche nach Name, Ort oder Ohrmarke...",
+    "filterAll": "Alle",
+    "filterVaccinated": "Geimpft",
+    "filterPending": "Ausstehend",
+    "noDogs": "Keine Hunde gefunden",
+    "resetFilters": "Filter zurücksetzen"
+  },
   "dogCard": {
     "vaccinated": "Geimpft",
     "notVaccinated": "Nicht geimpft",
-    "urgency": "Dringlichkeit"
+    "urgency": "Dringlichkeit",
+    "visible": "Sichtbar",
+    "pending": "Ausstehend",
+    "thanks": "Danke für Deine Hilfe, {{name}}!"
+  },
+  "adoption": {
+    "title": "Adoptionstiere",
+    "description": "Wische durch die Karten und kontaktiere uns direkt beim passenden Hund.",
+    "loading": "Lädt...",
+    "noDogs": "Aktuell sind keine Adoptionstiere eingetragen.",
+    "adopt": "Adoptieren",
+    "location": "Ort",
+    "size": "Größe",
+    "weight": "Gewicht",
+    "energy": "Energie",
+    "character": "Charakter",
+    "age": "Alter n/a"
+  },
+  "info": {
+    "title": "Über Save The Paws",
+    "description": "Save The Paws koordiniert Rescue-, Impf- und Kastrationsaktionen in der Region Agadir-Taghazout. Diese App hilft uns, Hunde zu dokumentieren, Status nachzuverfolgen und Adoptionen zu ermöglichen.",
+    "helpTitle": "So kannst du helfen",
+    "help1": "Adoptieren oder Pflegestelle anbieten",
+    "help2": "Spenden für Kastration/Impfung",
+    "help3": "Rehab Spot nach Kastration anbieten",
+    "contactTitle": "Kontakt",
+    "contactText": "Schreib uns:"
+  },
+  "notFound": {
+    "title": "404",
+    "description": "Seite nicht gefunden",
+    "backHome": "Zur Startseite"
+  },
+  "adPopup": {
+    "visit": "Besuchen"
   },
   "pwa": {
     "installTitle": "Save The Paws installieren",

@@ -2,17 +2,25 @@ import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import SafeDogMap from "@/components/SafeDogMap";
 import MapLegend from "@/components/MapLegend";
-import { useDogs } from "@/hooks/useDogs";
+import { useDogs, useAllDogs } from "@/hooks/useDogs";
 import { useFacilities } from "@/hooks/useFacilities";
+import { useAuth } from "@/contexts/AuthContext";
+import { useIsHelper } from "@/hooks/useHelperApplication";
 import { useTranslation } from "react-i18next";
 
 const MapPage = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
-  const { data: dogs, isLoading: dogsLoading } = useDogs(true);
+  const { user, isAdmin } = useAuth();
+  const { data: isHelper } = useIsHelper(user?.id);
+  
+  const canSeeAll = isAdmin || isHelper;
+  
+  // Helpers/admins see ALL dogs, regular users see only approved
+  const { data: approvedDogs, isLoading: approvedLoading } = useDogs(true);
+  const { data: allDogs, isLoading: allLoading } = useAllDogs();
   const { data: facilities, isLoading: facilitiesLoading } = useFacilities();
   
-  // Parse URL params for centering on specific dog
   const latParam = searchParams.get('lat');
   const lngParam = searchParams.get('lng');
   const dogIdParam = searchParams.get('dog');
@@ -21,8 +29,9 @@ const MapPage = () => {
     ? [parseFloat(latParam), parseFloat(lngParam)] as [number, number]
     : undefined;
   
+  const dogsLoading = canSeeAll ? allLoading : approvedLoading;
   const isLoading = dogsLoading || facilitiesLoading;
-  const displayDogs = dogs || [];
+  const displayDogs = canSeeAll ? (allDogs || []) : (approvedDogs || []);
   const displayFacilities = facilities || [];
   const vaccinatedCount = displayDogs.filter((d) => d.isVaccinated).length;
   const pendingCount = displayDogs.filter((d) => !d.isVaccinated).length;

@@ -1,8 +1,9 @@
-import { MapPin, CheckCircle, AlertCircle, Heart, AlertTriangle, Syringe } from "lucide-react";
+import { MapPin, CheckCircle, AlertCircle, Heart, AlertTriangle } from "lucide-react";
 import { Dog, REPORT_TYPE_LABELS, ReportType } from "@/types/dog";
 import { format } from "date-fns";
 import { Calendar, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 interface DogCardProps {
   dog: Dog;
@@ -27,6 +28,8 @@ const getReportTypeBadge = (reportType: ReportType) => {
 };
 
 const DogCard = ({ dog, index }: DogCardProps) => {
+  const { t } = useTranslation();
+
   return (
     <div
       className="group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-medium transition-all duration-300 border border-border hover:-translate-y-1 animate-fade-in"
@@ -52,12 +55,12 @@ const DogCard = ({ dog, index }: DogCardProps) => {
             {dog.isVaccinated ? (
               <>
                 <CheckCircle className="w-3 h-3" />
-                Geimpft
+                {t('dogCard.vaccinated')}
               </>
             ) : (
               <>
                 <AlertCircle className="w-3 h-3" />
-                Nicht geimpft
+                {t('dogCard.notVaccinated')}
               </>
             )}
           </span>
@@ -67,7 +70,7 @@ const DogCard = ({ dog, index }: DogCardProps) => {
           <div className="absolute bottom-3 left-3 right-3">
             <div className="bg-red-600/90 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 w-fit">
               <AlertTriangle className="w-3 h-3" />
-              Dringlichkeit: {dog.urgencyLevel}
+              {t('dogCard.urgency')}: {dog.urgencyLevel}
             </div>
           </div>
         )}
@@ -97,14 +100,14 @@ const DogCard = ({ dog, index }: DogCardProps) => {
           <div className="mb-3 p-2 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-200 dark:border-red-800">
             <p className="text-sm text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
               <Heart className="w-4 h-4 fill-red-600 dark:fill-red-400" />
-              Danke für Deine Hilfe, {dog.sponsorName}!
+              {t('dogCard.thanks', { name: dog.sponsorName })}
             </p>
           </div>
         )}
 
         <div className="flex items-center justify-between pt-3 border-t border-border">
           <Badge variant={dog.isApproved ? 'default' : 'secondary'}>
-            {dog.isApproved ? 'Sichtbar' : 'Ausstehend'}
+            {dog.isApproved ? t('dogCard.visible') : t('dogCard.pending')}
           </Badge>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
             <Calendar className="w-3 h-3" />
