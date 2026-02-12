@@ -39,7 +39,7 @@ export function OfflineProvider({ children }: { children: React.ReactNode }) {
 
   // Fetch and cache dogs when online
   const fetchAndCacheDogs = useCallback(async () => {
-    if (!isOnline) return;
+    if (!isOnline || !supabase) return;
 
     try {
       const { data, error } = await supabase
@@ -68,7 +68,7 @@ export function OfflineProvider({ children }: { children: React.ReactNode }) {
 
   // Sync offline queue when back online
   const syncQueue = useCallback(async () => {
-    if (!isOnline || pendingCount === 0) return;
+    if (!isOnline || !supabase || pendingCount === 0) return;
 
     setIsSyncing(true);
     console.log('[Offline] Starting queue sync, pending:', pendingCount);
