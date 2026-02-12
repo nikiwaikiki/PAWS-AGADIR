@@ -1,4 +1,4 @@
-// File: /home/project/app/dogs/page.tsx
+// File: /home/runner/work/PAWS-AGADIR/PAWS-AGADIR/app/dogs/page.tsx
 import * as entry from '../../../../app/dogs/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
