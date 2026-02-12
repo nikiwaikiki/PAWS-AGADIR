@@ -24,7 +24,9 @@ import RequireAuth from "@/components/RequireAuth";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  console.log("[v0] App component rendering");
+  return (
   <I18nextProvider i18n={i18n}>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -59,6 +61,7 @@ const App = () => (
       </AuthProvider>
     </QueryClientProvider>
   </I18nextProvider>
-);
+  );
+};
 
 export default App;
