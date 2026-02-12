@@ -6,7 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:production": "bash scripts/build.sh",
+    "start:production": "bash scripts/start.sh",
+    "clean:artifacts": "bash scripts/clean-artifacts.sh",
+    "deploy": "npm run build:production && npm run start:production"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
@@ -26,8 +30,8 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-toast": "^1.2.14",
     "@radix-ui/react-tooltip": "^1.2.7",
-    "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.49.1",
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.95.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -36,7 +40,7 @@
     "i18next-browser-languagedetector": "^8.2.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.462.0",
-    "next": "15.3.3",
+    "next": "^15.5.12",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^16.5.3",

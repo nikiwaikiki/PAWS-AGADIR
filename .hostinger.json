@@ -1,0 +1,32 @@
+{
+  "name": "paws-agadir",
+  "version": "1.0.0",
+  "description": "PAWS Agadir - Dog Rescue & Adoption Platform",
+  "runtime": {
+    "type": "nodejs",
+    "version": "20.x"
+  },
+  "build": {
+    "command": "npm run build:production",
+    "outputDirectory": ".next"
+  },
+  "start": {
+    "command": "npm run start:production"
+  },
+  "environment": {
+    "NODE_ENV": "production"
+  },
+  "optimization": {
+    "standalone": true,
+    "minify": true,
+    "compress": true
+  },
+  "monitoring": {
+    "enabled": true,
+    "healthCheck": {
+      "path": "/",
+      "interval": 30,
+      "timeout": 10
+    }
+  }
+}
