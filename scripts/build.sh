@@ -16,11 +16,7 @@ rm -rf node_modules/.cache
 echo "📥 Installing dependencies..."
 npm ci --omit=dev --production=false
 
-# Run type checking
-echo "🔍 Running TypeScript type checking..."
-npm run build -- --no-lint || echo "⚠️  Type check warnings (continuing build)"
-
-# Build the application
+# Run build
 echo "🔨 Building Next.js application..."
 npm run build
 

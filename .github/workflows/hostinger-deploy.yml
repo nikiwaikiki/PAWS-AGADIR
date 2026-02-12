@@ -43,7 +43,7 @@ jobs:
           script: |
             cd ${{ secrets.HOSTINGER_APP_PATH }}
             git pull origin main
-            npm ci --production=false
+            npm ci --omit=dev
             npm run build
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
             

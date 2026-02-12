@@ -16,6 +16,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // After hydration, detect the user's preferred language from localStorage or browser settings
+    // Only run on client-side
+    if (typeof window === 'undefined') return;
+    
     const stored = localStorage.getItem('i18nextLng');
     if (stored && SUPPORTED_LANGUAGES.includes(stored)) {
       i18n.changeLanguage(stored);
