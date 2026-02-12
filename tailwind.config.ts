@@ -22,8 +22,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Outfit", "system-ui", "sans-serif"],
-        display: ["Merriweather", "Georgia", "serif"],
+        sans: ["var(--font-outfit)", "system-ui", "sans-serif"],
+        display: ["var(--font-merriweather)", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
