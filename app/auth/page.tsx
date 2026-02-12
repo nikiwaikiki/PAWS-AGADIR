@@ -19,24 +19,32 @@ export default function AuthPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase) return;
+    if (!supabase) {
+      setError("Service unavailable. Please try again later.");
+      return;
+    }
     setError("");
     setLoading(true);
 
-    if (isLogin) {
-      const { error: err } = await supabase.auth.signInWithPassword({ email, password });
-      if (err) setError(t("auth.invalidCredentials"));
-      else router.push("/dogs");
-    } else {
-      const { error: err } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { display_name: displayName } },
-      });
-      if (err) setError(t("auth.emailAlreadyRegistered"));
-      else router.push("/dogs");
+    try {
+      if (isLogin) {
+        const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+        if (err) setError(t("auth.invalidCredentials"));
+        else router.push("/dogs");
+      } else {
+        const { error: err } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { display_name: displayName } },
+        });
+        if (err) setError(t("auth.emailAlreadyRegistered"));
+        else router.push("/dogs");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
