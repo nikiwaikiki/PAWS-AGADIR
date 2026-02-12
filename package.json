@@ -6,7 +6,15 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:hostinger": "bash scripts/build.sh",
+    "start:hostinger": "bash scripts/start.sh",
+    "deploy:hostinger": "npm run build:hostinger && npm run start:hostinger",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:stop": "pm2 stop ecosystem.config.js",
+    "pm2:restart": "pm2 restart ecosystem.config.js",
+    "pm2:logs": "pm2 logs paws-agadir",
+    "pm2:status": "pm2 status"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

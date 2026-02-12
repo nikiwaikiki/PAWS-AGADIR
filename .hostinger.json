@@ -1,0 +1,32 @@
+{
+  "name": "paws-agadir",
+  "version": "1.0.0",
+  "type": "nextjs",
+  "node_version": "20.x",
+  "package_manager": "npm",
+  "build": {
+    "command": "npm run build",
+    "output_directory": ".next",
+    "environment": {
+      "NODE_ENV": "production"
+    }
+  },
+  "start": {
+    "command": "npm start",
+    "port": 3000,
+    "host": "0.0.0.0"
+  },
+  "cache": {
+    "enabled": true,
+    "paths": [
+      ".next/cache",
+      "node_modules"
+    ]
+  },
+  "healthcheck": {
+    "enabled": true,
+    "path": "/",
+    "interval": 30,
+    "timeout": 10
+  }
+}

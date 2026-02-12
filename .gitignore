@@ -1,2 +1,15 @@
 node_modules/
 .env
+.next/
+.DS_Store
+*.log
+logs/
+*.swp
+*.swo
+.vscode/
+.idea/
+dist/
+build/
+.cache/
+*.tsbuildinfo
+
