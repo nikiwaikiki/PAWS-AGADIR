@@ -1,6 +1,12 @@
 {
-  "/page": "app/page.js",
-  "/dogs/page": "app/dogs/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/adoption/page": "app/adoption/page.js",
-  "/info/page": "app/info/page.js"
+  "/auth/page": "app/auth/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dogs/page": "app/dogs/page.js",
+  "/become-helper/page": "app/become-helper/page.js",
+  "/info/page": "app/info/page.js",
+  "/map/page": "app/map/page.js",
+  "/page": "app/page.js",
+  "/report/page": "app/report/page.js"
 }
