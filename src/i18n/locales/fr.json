@@ -20,13 +20,41 @@
     "title": "Save The",
     "titleHighlight": "Paws",
     "description": "Signalez les animaux en détresse, connectez-vous avec les aidants locaux et suivez les chiens vaccinés dans la belle région côtière d'Agadir-Taghazout.",
-    "slogan": "Together, we save lives. 💚",
-    "exploreMap": "Explorer la carte",
+    "slogan": "Together, we save lives.",
+    "viewDogs": "Voir les chiens",
     "reportAnimal": "Signaler un animal",
+    "imageAlt": "Chien sur la plage de Taghazout",
     "stats": {
       "vaccinated": "Chiens vaccinés",
       "users": "Utilisateurs"
     }
+  },
+  "landing": {
+    "mission": {
+      "title": "Protection des chiens errants a Agadir & Taghazout",
+      "description": "Save The Paws est une initiative communautaire pour taguer, vacciner et secourir les chiens errants le long de la belle cote atlantique du Maroc. Nous connectons touristes, locaux et amoureux des animaux pour faire une vraie difference -- une patte a la fois."
+    },
+    "features": {
+      "title": "Ce que vous pouvez faire",
+      "description": "Decouvrez les outils qui aident a proteger les chiens errants de la region.",
+      "taggedDogs": {
+        "title": "Voir les chiens tagges",
+        "description": "Parcourez tous les chiens enregistres et vaccines de la communaute."
+      },
+      "sos": {
+        "title": "Urgence SOS",
+        "description": "Signalez des animaux blesses ou en danger qui ont besoin d'aide immediate."
+      },
+      "reportStray": {
+        "title": "Signaler un errant",
+        "description": "Vous voyez un chien sans marque ? Faites-le nous savoir pour que nous puissions aider."
+      },
+      "adopt": {
+        "title": "Adopter un chien",
+        "description": "Donnez un foyer a un chien secouru. Parcourez les chiens prets a l'adoption."
+      }
+    },
+    "learnMore": "En savoir plus"
   },
   "reportTypes": {
     "title": "Comment vous pouvez aider",
@@ -319,10 +347,54 @@
       "yourApplication": "Votre candidature :"
     }
   },
+  "dogsPage": {
+    "title": "Tous les chiens",
+    "description": "Tous les chiens enregistres dans notre base de donnees communautaire",
+    "searchPlaceholder": "Rechercher par nom, lieu ou marque d'oreille...",
+    "filterAll": "Tous",
+    "filterVaccinated": "Vaccines",
+    "filterPending": "En attente",
+    "noDogs": "Aucun chien trouve",
+    "resetFilters": "Reinitialiser les filtres"
+  },
   "dogCard": {
-    "vaccinated": "Vacciné",
-    "notVaccinated": "Non vacciné",
-    "urgency": "Urgence"
+    "vaccinated": "Vaccine",
+    "notVaccinated": "Non vaccine",
+    "urgency": "Urgence",
+    "visible": "Visible",
+    "pending": "En attente",
+    "thanks": "Merci pour votre aide, {{name}} !"
+  },
+  "adoption": {
+    "title": "Chiens a adopter",
+    "description": "Faites defiler les cartes et contactez-nous pour le chien qui vous convient.",
+    "loading": "Chargement...",
+    "noDogs": "Aucun chien disponible a l'adoption pour le moment.",
+    "adopt": "Adopter",
+    "location": "Lieu",
+    "size": "Taille",
+    "weight": "Poids",
+    "energy": "Energie",
+    "character": "Caractere",
+    "age": "Age n/a"
+  },
+  "info": {
+    "title": "A propos de Save The Paws",
+    "description": "Save The Paws coordonne les actions de sauvetage, vaccination et sterilisation dans la region d'Agadir-Taghazout. Cette app nous aide a documenter les chiens, suivre leur statut et permettre les adoptions.",
+    "helpTitle": "Comment vous pouvez aider",
+    "help1": "Adopter ou offrir une famille d'accueil",
+    "help2": "Faire un don pour la sterilisation/vaccination",
+    "help3": "Offrir un spot de rehab apres sterilisation",
+    "contactTitle": "Contact",
+    "contactText": "Ecrivez-nous :"
+  },
+  "notFound": {
+    "title": "404",
+    "description": "Page non trouvee",
+    "backHome": "Retour a l'accueil"
+  },
+  "adPopup": {
+    "visit": "Visiter"
   },
   "pwa": {
     "installTitle": "Installer Save The Paws",

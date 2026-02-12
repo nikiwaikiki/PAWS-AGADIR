@@ -7,8 +7,10 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useMyHelperApplication, useApplyAsHelper } from '@/hooks/useHelperApplication';
 import { Heart, CheckCircle, Clock, XCircle, Users, ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const BecomeHelperPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: existingApplication, isLoading } = useMyHelperApplication(user?.id);
@@ -43,12 +45,12 @@ const BecomeHelperPage = () => {
             <div className="glass-card rounded-xl p-8 animate-fade-in">
               <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h2 className="font-display text-2xl font-bold text-foreground mb-2">
-                Anmeldung erforderlich
+                {t('helper.loginRequired')}
               </h2>
               <p className="text-muted-foreground mb-4">
-                Bitte melde dich an, um dich als Helfer zu bewerben.
+                {t('helper.loginRequiredDesc')}
               </p>
-              <Button onClick={() => navigate('/auth')}>Anmelden</Button>
+              <Button onClick={() => navigate('/auth')}>{t('common.login')}</Button>
             </div>
           </div>
         </main>
@@ -61,13 +63,12 @@ const BecomeHelperPage = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <main className="pt-20 pb-12 flex items-center justify-center">
-          <div className="animate-pulse text-muted-foreground">Laden...</div>
+          <div className="animate-pulse text-muted-foreground">{t('common.loading')}</div>
         </main>
       </div>
     );
   }
 
-  // Show status if application exists
   if (existingApplication) {
     return (
       <div className="min-h-screen bg-background">
@@ -80,7 +81,7 @@ const BecomeHelperPage = () => {
               className="mb-6 gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              Zurück
+              {t('common.back')}
             </Button>
             
             <div className="glass-card rounded-xl p-8 text-center animate-fade-in">
@@ -88,10 +89,10 @@ const BecomeHelperPage = () => {
                 <>
                   <Clock className="w-16 h-16 text-amber-500 mx-auto mb-4" />
                   <h2 className="font-display text-2xl font-bold text-foreground mb-2">
-                    Bewerbung in Prüfung
+                    {t('helper.status.pending')}
                   </h2>
                   <p className="text-muted-foreground mb-4">
-                    Deine Bewerbung wird von einem Admin geprüft. Wir melden uns bald bei dir!
+                    {t('helper.status.pendingDesc')}
                   </p>
                 </>
               )}
@@ -99,14 +100,14 @@ const BecomeHelperPage = () => {
                 <>
                   <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                   <h2 className="font-display text-2xl font-bold text-foreground mb-2">
-                    Du bist Helfer! 🎉
+                    {t('helper.status.approved')}
                   </h2>
                   <p className="text-muted-foreground mb-4">
-                    Willkommen im Team! Du kannst jetzt SOS-Meldungen sehen und Meldungen freigeben.
+                    {t('helper.status.approvedDesc')}
                   </p>
                   <Button onClick={() => navigate('/admin')} className="gap-2">
                     <Heart className="w-4 h-4" />
-                    Zum Dashboard
+                    {t('helper.status.goToDashboard')}
                   </Button>
                 </>
               )}
@@ -114,16 +115,16 @@ const BecomeHelperPage = () => {
                 <>
                   <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
                   <h2 className="font-display text-2xl font-bold text-foreground mb-2">
-                    Bewerbung abgelehnt
+                    {t('helper.status.rejected')}
                   </h2>
                   <p className="text-muted-foreground mb-4">
-                    Leider wurde deine Bewerbung abgelehnt. Bei Fragen kontaktiere uns gerne.
+                    {t('helper.status.rejectedDesc')}
                   </p>
                 </>
               )}
               
               <div className="mt-6 p-4 bg-secondary/50 rounded-lg text-left">
-                <Label className="text-xs text-muted-foreground">Deine Bewerbung:</Label>
+                <Label className="text-xs text-muted-foreground">{t('helper.status.yourApplication')}</Label>
                 <p className="text-sm text-foreground mt-1">{existingApplication.message}</p>
               </div>
             </div>
@@ -145,66 +146,64 @@ const BecomeHelperPage = () => {
             className="mb-6 gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            Zurück
+            {t('common.back')}
           </Button>
 
           <div className="mb-8 animate-fade-in">
             <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground mb-2">
-              Werde Helfer 💚
+              {t('helper.title')}
             </h1>
             <p className="text-muted-foreground">
-              Hilf aktiv bei der Rettung und Versorgung von Tieren in Not.
+              {t('helper.description')}
             </p>
           </div>
 
-          {/* Benefits */}
           <div className="glass-card rounded-xl p-6 mb-6 animate-fade-in">
             <h2 className="font-display text-xl font-bold text-foreground mb-4">
-              Was Helfer können:
+              {t('helper.benefits.title')}
             </h2>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
                 <span className="text-muted-foreground">
-                  <strong className="text-foreground">SOS-Meldungen sehen</strong> – Reagiere schnell auf Notfälle
+                  <strong className="text-foreground">{t('helper.benefits.seeSos')}</strong> {' -- '} {t('helper.benefits.sosDesc')}
                 </span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
                 <span className="text-muted-foreground">
-                  <strong className="text-foreground">Meldungen freigeben</strong> – Prüfe und veröffentliche neue Meldungen
+                  <strong className="text-foreground">{t('helper.benefits.approve')}</strong> {' -- '} {t('helper.benefits.approveDesc')}
                 </span>
               </li>
               <li className="flex items-start gap-3">
                 <CheckCircle className="w-5 h-5 text-green-500 mt-0.5" />
                 <span className="text-muted-foreground">
-                  <strong className="text-foreground">Hunde-Daten bearbeiten</strong> – Halte Informationen aktuell
+                  <strong className="text-foreground">{t('helper.benefits.edit')}</strong> {' -- '} {t('helper.benefits.editDesc')}
                 </span>
               </li>
             </ul>
           </div>
 
-          {/* Application Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="glass-card rounded-xl p-6 animate-fade-in">
               <h2 className="font-display text-xl font-bold text-foreground mb-4 flex items-center gap-2">
                 <Heart className="w-5 h-5 text-primary" />
-                Deine Bewerbung
+                {t('helper.application.title')}
               </h2>
               
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="message">Warum möchtest du Helfer werden?</Label>
+                  <Label htmlFor="message">{t('helper.application.question')}</Label>
                   <Textarea
                     id="message"
-                    placeholder="Erzähle uns ein bisschen über dich und warum du helfen möchtest..."
+                    placeholder={t('helper.application.placeholder')}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     rows={5}
                     required
                   />
                   <p className="text-xs text-muted-foreground">
-                    Teile uns deine Motivation und ggf. relevante Erfahrungen mit.
+                    {t('helper.application.hint')}
                   </p>
                 </div>
               </div>
@@ -216,7 +215,7 @@ const BecomeHelperPage = () => {
                 variant="outline" 
                 onClick={() => navigate('/')}
               >
-                Abbrechen
+                {t('common.cancel')}
               </Button>
               <Button 
                 type="submit" 
@@ -224,7 +223,7 @@ const BecomeHelperPage = () => {
                 disabled={isSubmitting || !message.trim()}
               >
                 <Heart className="w-4 h-4" />
-                {isSubmitting ? 'Wird gesendet...' : 'Bewerbung absenden'}
+                {isSubmitting ? t('helper.application.submitting') : t('helper.application.submit')}
               </Button>
             </div>
           </form>

@@ -14,13 +14,13 @@ import AdminPage from "./pages/AdminPage";
 import BecomeHelperPage from "./pages/BecomeHelperPage";
 import InstallPage from "./pages/InstallPage";
 import NotFound from "./pages/NotFound";
+import AdoptionPage from "./pages/AdoptionPage";
+import InfoPage from "./pages/InfoPage";
 
 import InstallPWA from "./components/InstallPWA";
 import OfflineIndicator from "./components/OfflineIndicator";
+import AdPopup from "./components/AdPopup";
 import RequireAuth from "@/components/RequireAuth";
-
-import AdoptionPage from "@/pages/AdoptionPage";
-import InfoPage from "@/pages/InfoPage";
 
 const queryClient = new QueryClient();
 
@@ -33,37 +33,26 @@ const App = () => (
             <OfflineIndicator />
 
             <Routes>
+              {/* Public routes */}
               <Route path="/" element={<Index />} />
-              <Route path="/map" element={<MapPage />} />
-              <Route path="/dogs" element={<DogsPage />} />
-              <Route path="/add" element={<AddDogPage />} />
               <Route path="/auth" element={<AuthPage />} />
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/become-helper" element={<BecomeHelperPage />} />
               <Route path="/install" element={<InstallPage />} />
+              <Route path="/info" element={<InfoPage />} />
 
-              {/* Helpers-only */}
-              <Route
-                path="/info"
-                element={
-                  <RequireAuth>
-                    <InfoPage />
-                  </RequireAuth>
-                }
-              />
-              <Route
-                path="/adoption"
-                element={
-                  <RequireAuth>
-                    <AdoptionPage />
-                  </RequireAuth>
-                }
-              />
+              {/* Auth-required routes */}
+              <Route path="/map" element={<RequireAuth><MapPage /></RequireAuth>} />
+              <Route path="/dogs" element={<RequireAuth><DogsPage /></RequireAuth>} />
+              <Route path="/add" element={<RequireAuth><AddDogPage /></RequireAuth>} />
+              <Route path="/adoption" element={<RequireAuth><AdoptionPage /></RequireAuth>} />
+              <Route path="/become-helper" element={<RequireAuth><BecomeHelperPage /></RequireAuth>} />
 
-              {/* keep this LAST and only once */}
+              {/* Admin/Helper dashboard (has its own internal role check) */}
+              <Route path="/admin" element={<RequireAuth><AdminPage /></RequireAuth>} />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
 
+            <AdPopup />
             <InstallPWA />
           </BrowserRouter>
         </OfflineProvider>

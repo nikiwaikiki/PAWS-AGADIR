@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
+import Header from "@/components/Header";
 
 type AdoptionDog = {
   id: string;
@@ -55,11 +57,11 @@ function TraitTag({ text, accent }: { text: string; accent?: boolean }) {
   );
 }
 
-function AdoptionCard({ dog, index }: { dog: AdoptionDog; index: number }) {
+function AdoptionCard({ dog, t }: { dog: AdoptionDog; index: number; t: (key: string) => string }) {
   const traits = dog.traits ?? [];
   const contactHref =
     dog.contact_url ||
-    "mailto:contact@save-the-paws.de?subject=Adoption%20Anfrage&body=Ich%20interessiere%20mich%20für%20" +
+    "mailto:contact@save-the-paws.de?subject=Adoption%20Inquiry&body=I%20am%20interested%20in%20" +
       encodeURIComponent(dog.name);
 
   return (
@@ -71,7 +73,6 @@ function AdoptionCard({ dog, index }: { dog: AdoptionDog; index: number }) {
         boxShadow: `0 6px 0 ${theme.navy}, 0 8px 15px rgba(26,35,50,.30)`,
       }}
     >
-      {/* top stripe */}
       <div
         className="absolute inset-x-0 top-0 h-[6px] z-10"
         style={{
@@ -80,10 +81,6 @@ function AdoptionCard({ dog, index }: { dog: AdoptionDog; index: number }) {
             `${theme.orange} 0px, ${theme.orange} 8px, ${theme.navy} 8px, ${theme.navy} 16px)`,
         }}
       />
-      {/* suit icon */}
-      <div className="absolute top-3 right-3 text-2xl opacity-20" style={{ color: theme.orange }}>
-        ♠
-      </div>
 
       <img
         src={dog.photo_url || "/placeholder.svg"}
@@ -108,7 +105,7 @@ function AdoptionCard({ dog, index }: { dog: AdoptionDog; index: number }) {
               whiteSpace: "nowrap",
             }}
           >
-            {dog.age_text || "Alter n/a"}
+            {dog.age_text || t('adoption.age')}
           </span>
         </div>
 
@@ -116,17 +113,10 @@ function AdoptionCard({ dog, index }: { dog: AdoptionDog; index: number }) {
           className="relative grid grid-cols-2 gap-2 p-3 rounded border-2 my-2"
           style={{ background: theme.beige, borderColor: theme.navy }}
         >
-          <div
-            className="absolute -top-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center text-[11px]"
-            style={{ background: theme.orange, color: theme.white, borderColor: theme.navy }}
-          >
-            ★
-          </div>
-
-          <Stat icon="📏" label="Größe" value={dog.size || "n/a"} />
-          <Stat icon="⚖️" label="Gewicht" value={dog.weight_kg ? `${dog.weight_kg}kg` : "n/a"} />
-          <Stat icon="🎯" label="Energie" value={dog.energy || "n/a"} />
-          <Stat icon="❤️" label="Charakter" value={dog.character || "n/a"} />
+          <Stat icon="📏" label={t('adoption.size')} value={dog.size || "n/a"} />
+          <Stat icon="⚖️" label={t('adoption.weight')} value={dog.weight_kg ? `${dog.weight_kg}kg` : "n/a"} />
+          <Stat icon="🎯" label={t('adoption.energy')} value={dog.energy || "n/a"} />
+          <Stat icon="❤️" label={t('adoption.character')} value={dog.character || "n/a"} />
         </div>
 
         {dog.description && (
@@ -137,8 +127,8 @@ function AdoptionCard({ dog, index }: { dog: AdoptionDog; index: number }) {
 
         {!!traits.length && (
           <div className="flex flex-wrap gap-1.5 mt-2">
-            {traits.slice(0, 8).map((t, i) => (
-              <TraitTag key={t + i} text={t} accent={i % 2 === 1} />
+            {traits.slice(0, 8).map((trait, i) => (
+              <TraitTag key={trait + i} text={trait} accent={i % 2 === 1} />
             ))}
           </div>
         )}
@@ -153,12 +143,12 @@ function AdoptionCard({ dog, index }: { dog: AdoptionDog; index: number }) {
             boxShadow: `0 4px 0 ${theme.navy}`,
           }}
         >
-          Adoptieren
+          {t('adoption.adopt')}
         </a>
 
         {dog.location && (
           <div className="mt-2 text-xs opacity-80" style={{ color: theme.navy }}>
-            Ort: {dog.location}
+            {t('adoption.location')}: {dog.location}
           </div>
         )}
       </div>
@@ -167,6 +157,7 @@ function AdoptionCard({ dog, index }: { dog: AdoptionDog; index: number }) {
 }
 
 export default function AdoptionPage() {
+  const { t } = useTranslation();
   const [dogs, setDogs] = useState<AdoptionDog[]>([]);
   const [loading, setLoading] = useState(true);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -174,14 +165,23 @@ export default function AdoptionPage() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("adoption_dogs")
-        .select("*")
-        .eq("is_active", true)
-        .order("sort_order", { ascending: true })
-        .order("created_at", { ascending: false });
+      try {
+        const { data, error } = await supabase
+          .from("adoption_dogs")
+          .select("*")
+          .eq("is_active", true)
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: false });
 
-      if (!error) setDogs((data as AdoptionDog[]) || []);
+        if (!error && data) {
+          setDogs(data as AdoptionDog[]);
+        } else if (error) {
+          // Table may not exist yet -- gracefully show empty
+          console.warn("[Adoption] Could not load adoption dogs:", error.message);
+        }
+      } catch (err) {
+        console.warn("[Adoption] Unexpected error:", err);
+      }
       setLoading(false);
     })();
   }, []);
@@ -196,79 +196,83 @@ export default function AdoptionPage() {
   };
 
   return (
-    <div className="p-4" style={{ background: theme.beige, minHeight: "100vh" }}>
-      <div className="mx-auto max-w-[900px]">
-        <h1 className="text-2xl font-semibold mb-2" style={{ color: theme.navy }}>
-          Adoptionstiere
-        </h1>
-        <p className="text-sm mb-4 opacity-80" style={{ color: theme.navy }}>
-          Wische durch die Karten (Quartett-Stil) und kontaktiere uns direkt beim passenden Hund.
-        </p>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <main className="pt-20 pb-12">
+        <div className="p-4" style={{ background: theme.beige }}>
+          <div className="mx-auto max-w-[900px]">
+            <h1 className="text-2xl font-semibold mb-2" style={{ color: theme.navy }}>
+              {t('adoption.title')}
+            </h1>
+            <p className="text-sm mb-4 opacity-80" style={{ color: theme.navy }}>
+              {t('adoption.description')}
+            </p>
 
-        {loading ? (
-          <div className="text-sm" style={{ color: theme.navy }}>
-            Lädt…
-          </div>
-        ) : dogs.length === 0 ? (
-          <div className="text-sm" style={{ color: theme.navy }}>
-            Aktuell sind keine Adoptionstiere eingetragen.
-          </div>
-        ) : (
-          <>
-            {/* “Carousel” via scroll-snap */}
-            <div className="relative">
-              <div
-                ref={scrollerRef}
-                className="flex gap-5 overflow-x-auto pb-3"
-                style={{
-                  scrollSnapType: "x mandatory",
-                  WebkitOverflowScrolling: "touch",
-                }}
-              >
-                {dogs.map((d, idx) => (
-                  <div key={d.id} data-card style={{ scrollSnapAlign: "start" }}>
-                    <AdoptionCard dog={d} index={idx} />
+            {loading ? (
+              <div className="text-sm" style={{ color: theme.navy }}>
+                {t('adoption.loading')}
+              </div>
+            ) : dogs.length === 0 ? (
+              <div className="text-sm" style={{ color: theme.navy }}>
+                {t('adoption.noDogs')}
+              </div>
+            ) : (
+              <>
+                <div className="relative">
+                  <div
+                    ref={scrollerRef}
+                    className="flex gap-5 overflow-x-auto pb-3"
+                    style={{
+                      scrollSnapType: "x mandatory",
+                      WebkitOverflowScrolling: "touch",
+                    }}
+                  >
+                    {dogs.map((d, idx) => (
+                      <div key={d.id} data-card style={{ scrollSnapAlign: "start" }}>
+                        <AdoptionCard dog={d} index={idx} t={t} />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              {/* Controls */}
-              <div className="flex justify-center gap-4 mt-3">
-                <button
-                  onClick={() => scrollToIndex(Math.max(0, 0))}
-                  className="w-11 h-11 rounded border-2 font-bold"
-                  style={{ borderColor: theme.navy, boxShadow: `0 4px 0 ${theme.navy}`, background: theme.white, color: theme.navy }}
-                  type="button"
-                >
-                  ←
-                </button>
-                <button
-                  onClick={() => scrollToIndex(Math.max(0, pages - 1))}
-                  className="w-11 h-11 rounded border-2 font-bold"
-                  style={{ borderColor: theme.navy, boxShadow: `0 4px 0 ${theme.navy}`, background: theme.white, color: theme.navy }}
-                  type="button"
-                >
-                  →
-                </button>
-              </div>
+                  <div className="flex justify-center gap-4 mt-3">
+                    <button
+                      onClick={() => scrollToIndex(Math.max(0, 0))}
+                      className="w-11 h-11 rounded border-2 font-bold"
+                      style={{ borderColor: theme.navy, boxShadow: `0 4px 0 ${theme.navy}`, background: theme.white, color: theme.navy }}
+                      type="button"
+                      aria-label="Previous"
+                    >
+                      {'←'}
+                    </button>
+                    <button
+                      onClick={() => scrollToIndex(Math.max(0, pages - 1))}
+                      className="w-11 h-11 rounded border-2 font-bold"
+                      style={{ borderColor: theme.navy, boxShadow: `0 4px 0 ${theme.navy}`, background: theme.white, color: theme.navy }}
+                      type="button"
+                      aria-label="Next"
+                    >
+                      {'→'}
+                    </button>
+                  </div>
 
-              {/* Dots */}
-              <div className="flex justify-center gap-2 mt-3">
-                {dogs.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => scrollToIndex(i)}
-                    className="h-3 w-3 rounded-sm border-2"
-                    style={{ borderColor: theme.navy, background: theme.white, boxShadow: `1px 1px 0 ${theme.navy}` }}
-                    type="button"
-                    aria-label={`Karte ${i + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+                  <div className="flex justify-center gap-2 mt-3">
+                    {dogs.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => scrollToIndex(i)}
+                        className="h-3 w-3 rounded-sm border-2"
+                        style={{ borderColor: theme.navy, background: theme.white, boxShadow: `1px 1px 0 ${theme.navy}` }}
+                        type="button"
+                        aria-label={`Card ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

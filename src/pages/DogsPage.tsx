@@ -6,16 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 const DogsPage = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "vaccinated" | "pending">("all");
   const queryClient = useQueryClient();
   
-  // Fetch dogs from database
   const { data: dogs = [], isLoading, refetch } = useDogs(true);
   
-  // Refetch on mount to get latest data
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ['dogs'] });
   }, [queryClient]);
@@ -40,19 +40,18 @@ const DogsPage = () => {
         <div className="container mx-auto px-4">
           <div className="mb-8 animate-fade-in">
             <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground mb-2">
-              Alle Hunde
+              {t('dogsPage.title')}
             </h1>
             <p className="text-muted-foreground">
-              Alle registrierten Hunde in unserer Community-Datenbank
+              {t('dogsPage.description')}
             </p>
           </div>
 
-          {/* Search and Filter */}
           <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-fade-in">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Suche nach Name, Ort oder Ohrmarke..."
+                placeholder={t('dogsPage.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -66,7 +65,7 @@ const DogsPage = () => {
                 className="gap-1"
               >
                 <Filter className="w-4 h-4" />
-                Alle
+                {t('dogsPage.filterAll')}
               </Button>
               <Button
                 variant={filter === "vaccinated" ? "safe" : "outline"}
@@ -75,7 +74,7 @@ const DogsPage = () => {
                 className="gap-1"
               >
                 <CheckCircle className="w-4 h-4" />
-                Geimpft
+                {t('dogsPage.filterVaccinated')}
               </Button>
               <Button
                 variant={filter === "pending" ? "default" : "outline"}
@@ -84,12 +83,11 @@ const DogsPage = () => {
                 className={filter === "pending" ? "bg-warning text-warning-foreground hover:bg-warning/90" : ""}
               >
                 <AlertCircle className="w-4 h-4" />
-                Ausstehend
+                {t('dogsPage.filterPending')}
               </Button>
             </div>
           </div>
 
-          {/* Results */}
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -102,7 +100,7 @@ const DogsPage = () => {
             </div>
           ) : (
             <div className="text-center py-12 animate-fade-in">
-              <p className="text-muted-foreground text-lg">Keine Hunde gefunden</p>
+              <p className="text-muted-foreground text-lg">{t('dogsPage.noDogs')}</p>
               <Button
                 variant="link"
                 onClick={() => {
@@ -110,7 +108,7 @@ const DogsPage = () => {
                   setFilter("all");
                 }}
               >
-                Filter zurücksetzen
+                {t('dogsPage.resetFilters')}
               </Button>
             </div>
           )}
